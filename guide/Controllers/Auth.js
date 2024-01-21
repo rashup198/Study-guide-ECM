@@ -154,3 +154,46 @@ exports.login = async (req, res) => {
         })
     }
 }
+
+// send otp for email verification
+
+exports.sendOtp = async (req,res)=>{
+
+    try {
+        const {email} = req.body;
+
+        // check if user already exists
+        //find the user with the email
+        const checkUserPresent = await User.findOne({email});
+
+        // if user is present then send error
+        if(checkUserPresent){
+            return res.status(400).json({
+                message:"User already exists",
+            })
+        }
+
+        // generate otp
+        const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets:false });
+
+        const result = await OTP.findOne({otp:otp});
+        console.log("result",result);
+        while(result){
+            const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets:false });
+        }
+
+        const otpPayload = {email,otp};
+        const otpBody = await OTP.create(otpPayload);
+        console.log("otpBody",otpBody);
+        return res.status(200).json({
+            message:"OTP sent successfully",
+            otp,
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"There is some error sending otp please try again later",
+        })
+    }
+}
