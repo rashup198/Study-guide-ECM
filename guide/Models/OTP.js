@@ -18,22 +18,22 @@ const OTPSchema = new mongoose.Schema({
 });
 
 // funtion to genereate and send OTP to the user
-
-async function sendVerificationMail(email, otp) {
+async function sendVerificationEmail(email,otp){
     try {
-       const mailResponse= await mailSender(email, "OTP FROM VITERN",`Your otp is ${otp}`);
-       console.log("mailResponse",mailResponse);
-    } catch (err) {
-        console.log("There is some error sending mail", err);
-
+        const mailResponse = await mailSender(email, "OTP from SAGE", `Your OTP is ${otp}`);
+        console.log("Mail Response: ", mailResponse);
+    } catch (error) {
+        console.log("Error in sending verification email",error);
+        throw new Error(error);
     }
 }
 
-OTPSchema.pre('save', async function (next) {
+OTPSchema.pre('save',async function(next){
+    // sending mail when OTP is created in db
+
     if(!this.isNew){
-        await sendVerificationMail(this.email, this.otp);
-
+        await sendVerificationEmail(this.email,this.otp);
     }next();
-});
+})
 
-module.exports = mongoose.model('OTP', OTPSchema);
+module.exports = mongoose.model('OTP',OTPSchema);

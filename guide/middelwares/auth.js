@@ -6,7 +6,7 @@ exports.auth= async(req, res, next)=>{
 
     try {
         // get the token header from the user
-        const token = req.header('Authorization').replace('Bearer ', '')|| req.body.token || req.query.token;
+        const token =  req.body.token || req.query.tokenreq.header('Authorization').replace('Bearer ', '');
         console.log(token);
     // if there is no token
     if(!token){

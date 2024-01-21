@@ -6,9 +6,9 @@ const {
     login,
     signup,
     sendOtp,
-} = require('../Controllers/User');
+} = require('../Controllers/Auth');
 
-const{auth}=require('../Middlewares/auth')
+const{auth}=require('../middelwares/auth')
 
 // auth routes
 

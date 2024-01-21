@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const OTP = require('../Models/OTP');
 const otpGenerator = require('otp-generator');
 const User = require('../Models/User');
+const mailSender= require('../utils/mailSender');
 const Profile = require('../Models/Profile');
 require('dotenv').config();
 
@@ -160,40 +161,46 @@ exports.login = async (req, res) => {
 exports.sendOtp = async (req,res)=>{
 
     try {
-        const {email} = req.body;
-
-        // check if user already exists
-        //find the user with the email
-        const checkUserPresent = await User.findOne({email});
-
-        // if user is present then send error
-        if(checkUserPresent){
-            return res.status(400).json({
-                message:"User already exists",
-            })
+        const { email } = req.body
+    
+        // Check if user is already present
+        // Find user with provided email
+        const checkUserPresent = await User.findOne({ email })
+        // to be used in case of signup
+    
+        // If user found with provided email
+        if (checkUserPresent) {
+          // Return 401 Unauthorized status code with error message
+          return res.status(401).json({
+            success: false,
+            message: `User is Already Registered`,
+          })
         }
-
-        // generate otp
-        const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets:false });
-
-        const result = await OTP.findOne({otp:otp});
-        console.log("result",result);
-        while(result){
-            const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets:false });
+    
+        var otp = otpGenerator.generate(6, {
+          upperCaseAlphabets: false,
+          lowerCaseAlphabets: false,
+          specialChars: false,
+        })
+        const result = await OTP.findOne({ otp: otp })
+        console.log("Result is Generate OTP Func")
+        console.log("OTP", otp)
+        console.log("Result", result)
+        while (result) {
+          otp = otpGenerator.generate(6, {
+            upperCaseAlphabets: false,
+          })
         }
-
-        const otpPayload = {email,otp};
-        const otpBody = await OTP.create(otpPayload);
-        console.log("otpBody",otpBody);
-        return res.status(200).json({
-            message:"OTP sent successfully",
-            otp,
+        const otpPayload = { email, otp }
+        const otpBody = await OTP.create(otpPayload)
+        console.log("OTP Body", otpBody)
+        res.status(200).json({
+          success: true,
+          message: `OTP Sent Successfully`,
+          otp,
         })
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            success:false,
-            message:"There is some error sending otp please try again later",
-        })
+      } catch (error) {
+        console.log(error.message)
+        return res.status(500).json({ success: false, error: error.message })
+      }
     }
-}
