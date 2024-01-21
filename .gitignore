@@ -6,6 +6,13 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.env
+
+# env file
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 /.env
 
 node_modules
