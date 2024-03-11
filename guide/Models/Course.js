@@ -2,26 +2,75 @@ const mongoose= require('mongoose')
 
 const courseSchema= new mongoose.Schema(
     {
-        courseId:{
-            type:String,
-            required:true
-        },
-        courseName:{
-            type:String,
-            required:true
-        },
-        courseType:{
-            type:String,
-            required:true
-        },
-        courseCredit:{
-            type:String,
-            required:true
-        },
-        courseContent:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"CourseContent"
+       domain:{
+        type:String,
+       },
+       content:[
+        {
+            courseTitle:{
+                type:String,
+                required:true,
+                trim:true
+            },
+            credits:{
+                type:String,
+                required:true
+            },
+            syllabus:{
+                type:String
+            },
+            studyMaterials:[
+                {
+                    moduleNo:{
+                        type:Number
+                    },
+                    moduleName:{
+                        type:String
+                    },
+                    moduleDiscription:{
+                        type:String
+                    },
+                    materialLink:{
+                        type:String
+                    }
+                }
+            ],
+        
+        prevPaper:[
+        {
+            examType:{
+                type:String
+            },
+            slot:{
+                type:String
+            },
+            year:{
+                type:String
+            },
+            paperLink:{
+                type:String
+            }
         }
+       ],
+       refVideos:[
+        {
+            moduleNo:{
+                type:Number
+            } ,
+            videos:[
+                {
+                    topic:{
+                        type:String
+                    },
+                    videoLink:{
+                        type:String
+                    }
+                }
+            ]
+        }
+       ]
+    }
+],
     },{timestamps:true}
 )
 
