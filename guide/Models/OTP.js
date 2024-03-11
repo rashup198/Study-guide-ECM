@@ -1,23 +1,28 @@
 const mongoose = require('mongoose');
 const mailSender = require('../utils/mailSender');
 
-const OTPSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true
-    },
-    otp: {
-        type: String,
-        required: true
-    },
-    createdAt: {
-        type: Date,
-        expires: 600,
-        default: Date.now
-    }
-});
+const OTPSchema = mongoose.Schema({
 
-// funtion to genereate and send OTP to the user
+    email:{
+        type:String,
+        required:true,
+        trim:true,
+    },
+    otp:{
+        type:String,
+        required:true,
+        trim:true,
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now,
+        expires:300,
+    }
+
+})
+
+// function to generate OTP
+
 async function sendVerificationEmail(email,otp){
     try {
         const mailResponse = await mailSender(email, "OTP from SAGE", `Your OTP is ${otp}`);

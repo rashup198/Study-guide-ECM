@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-const mailSender = async (email, titel, body)=>{
+const mailSender = async (email, title, body)=>{
 
     try {
         const transporter = nodemailer.createTransport({
@@ -14,8 +14,7 @@ const mailSender = async (email, titel, body)=>{
         let info = await transporter.sendMail({
             from:`Vitern || Learning Made Easy`,
             to: email,
-            subject: titel,
-            text: body
+            
         });
         console.log('Message sent: %s', info);
         return info;
