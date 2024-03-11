@@ -1,38 +1,44 @@
-const jwt= require('jsonwebtoken');
-const User = require("../Models/User")
-require('dotenv').config();
+const jwt= require("jsonwebtoken");
+const User = require("../Models/User");
+require("dotenv").config();
 
-exports.auth= async(req, res, next)=>{
+// auth middelware
 
-    try {
-        // get the token header from the user
-        const token =  req.body.token || req.query.tokenreq.header('Authorization').replace('Bearer ', '');
-        console.log(token);
-    // if there is no token
-    if(!token){
-        return res.status(401).json({
-            message:"No token, authorization denied",
-        })
-    }
-    // verify the token
+exports.auth = async (req,res,next) => {
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decoded);
-        req.user = decoded
-    } catch (error) {
-        console.log("there is some error in verifying the token", error);
-        return res.status(401).json({
-            message:"Token is not valid",
-        })
-    }
-    next();
+        //get token from header
+        const token =
+			req.cookies.token ||
+			req.body.token ||
+			req.header("Authorization").replace("Bearer ", "");
+        //if no token
+        if(!token){
+            return res.status(401).json({
+                success:false,
+                message:"No token found"
+            })
+        }
+        
+        //verify token
+        try {
+            const decode = jwt.verify(token,process.env.JWT_SECRET);
+            console.log("decode: ",decode);
+            req.user =decode;
 
+        } catch (error) {
+            console.log("error in verifying token",error);
+            return res.status(401).json({
+                success:false,
+                message:"Invalid token"
+            })
+        }
+        next();
     } catch (error) {
-        console.log("there is some error in auth middleware", error);
-        return res.status(500).json({
+        console.log("error in auth",error);
+        return res.status(401).json({
             success:false,
-            message:"Internal Server Error",
+            message:"Something went wrong in auth plese try again later"
         })
     }
 }
